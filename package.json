@@ -1,0 +1,39 @@
+{
+  "name": "optimism-transaction-replay",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@eth-optimism/core-utils": "^0.12.3",
+    "@eth-optimism/sdk": "^3.1.2",
+    "@mui/icons-material": "^5.14.9",
+    "@mui/lab": "^5.0.0-alpha.144",
+    "@mui/material": "^5.14.7",
+    "@types/luxon": "^3.3.2",
+    "@types/node": "20.5.9",
+    "@types/react": "18.2.21",
+    "@types/react-dom": "18.2.7",
+    "@web3-onboard/core": "^2.21.1",
+    "@web3-onboard/injected-wallets": "^2.10.6",
+    "bufferutil": "^4.0.7",
+    "eslint": "8.48.0",
+    "eslint-config-next": "13.4.19",
+    "ethers": "^5.7.2",
+    "luxon": "^3.4.3",
+    "next": "13.4.19",
+    "p-queue": "6.6.2",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-query": "^3.39.3",
+    "typescript": "5.2.2",
+    "utf-8-validate": "^6.0.3",
+    "wait": "^0.4.2"
+  }
+}

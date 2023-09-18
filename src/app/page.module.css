@@ -1,0 +1,93 @@
+.main {
+  display: flex;
+  flex-direction: column;
+  padding: 6rem;
+  max-width: 1600px;
+}
+
+.titleContainer {
+  padding: 4rem 1rem 1rem 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.titleContainer a {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.titleContainer a:hover {
+  text-decoration: none;
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  line-height: 1;
+  font-style: italic;
+  color: #000;
+}
+
+@media (max-width: 650px) {
+  .titleContainer a {
+    display: inline-flex;
+    flex-direction: column;
+  }
+  .subTitleContainer {
+    flex-direction: column;
+    text-align: center;
+    padding: 0;
+  }
+}
+
+.footer {
+  width: 100%;
+  max-width: 800px;
+  margin-top: 5rem;
+  margin-bottom: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 700;
+  padding: 0 1rem;
+}
+
+.footerLinks {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.footerOptimism {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.4rem;
+  font-weight: 700;
+  font-style: italic;
+  gap: 0.5rem;
+}
+
+.footerOptimism a {
+  display: inline-flex;
+  gap: 0.3rem;
+  color: #000;
+}
+
+.footerOptimism a:hover {
+  text-decoration: none;
+}
+
+@media (max-width: 650px) {
+  .footer {
+    flex-direction: column;
+  }
+  .footerOptimism {
+    flex-direction: column;
+    margin-bottom: 2rem;
+  }
+}
