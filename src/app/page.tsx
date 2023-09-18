@@ -1,5 +1,5 @@
 'use client'
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect, useCallback } from 'react'
 import styles from './page.module.css'
 import Image from 'next/image'
 import Box from '@mui/material/Box'
@@ -519,6 +519,7 @@ function Main() {
         </Typography>
         <TextField
           style={{width: '100%'}}
+          placeholder="0x"
           value={accountAddress}
           onChange={(event: any) => setAccountAddress(event.target.value?.trim())}
         />
@@ -711,17 +712,46 @@ function Main() {
 
 function CustomModal ({props}: any) {
   const { web3, replayItem, setReplayItem, l1ChainId } = props
-  const { address, connectWallet, getSignerOrRequestWallet, checkConnectedNetworkIdOrThrow } = web3
+  const { address, requestWallet, getSignerOrRequestWallet, checkConnectedNetworkIdOrThrow } = web3
   const [gasLimit, setGasLimit] = useState<any>('')
   const [error, setError] = useState<any>(null)
+  const [success, setSuccess] = useState<any>(null)
   const [sending, setSending] = useState(false)
+  const [estimatedCost, setEstimatedCost] = useState<any>(null)
   const prove = !replayItem?.isProven && !replayItem?.isFinalized
+
+  const replay = useCallback((estimateOnly?: boolean) => {
+    return replayMessage({
+      l1ChainId,
+      gasLimit,
+      fromChain: replayItem?.fromChain,
+      originTxHash: replayItem.originTxHash,
+      prove,
+      getSignerOrRequestWallet,
+      checkConnectedNetworkIdOrThrow,
+      estimateOnly
+    })
+  }, [l1ChainId, gasLimit, replayItem, prove, getSignerOrRequestWallet, checkConnectedNetworkIdOrThrow])
 
   useEffect(() => {
     if (replayItem?.gasLimit) {
       setGasLimit(replayItem.gasLimit)
     }
   }, [replayItem?.gasLimit])
+
+  useEffect(() => {
+    if (gasLimit) {
+      replay(true)
+      .then((estimate: string) => {
+        setEstimatedCost(estimate)
+      })
+      .catch(() => {
+        setEstimatedCost(null)
+      })
+    } else {
+      setEstimatedCost(null)
+    }
+  }, [gasLimit, replay])
 
   if (!replayItem) {
     return null
@@ -730,8 +760,10 @@ function CustomModal ({props}: any) {
   function handleModalClose () {
     setReplayItem(null)
     setError(null)
+    setSuccess(null)
     setSending(false)
     setGasLimit('')
+    setEstimatedCost(null)
   }
 
   async function handleSubmit (event: any) {
@@ -739,16 +771,10 @@ function CustomModal ({props}: any) {
 
     try {
       setError(null)
+      setSuccess(null)
       setSending(true)
-      await replayMessage({
-        l1ChainId,
-        gasLimit,
-        fromChain: replayItem?.fromChain,
-        originTxHash: replayItem.originTxHash,
-        prove,
-        getSignerOrRequestWallet,
-        checkConnectedNetworkIdOrThrow
-      })
+      const tx = await replay()
+      setSuccess(`Sent tx: ${tx.hash}`)
     } catch (err: any) {
       console.error(err)
       setError(err.message)
@@ -758,6 +784,7 @@ function CustomModal ({props}: any) {
 
   return (
     <Modal
+      sx={{ zIndex: 0 }}
       component="div"
       open={true}
       onClose={() => handleModalClose( )}
@@ -826,14 +853,22 @@ function CustomModal ({props}: any) {
                 />
               </Box>
             )}
+            {estimatedCost && (
+              <Box mb={4}>
+                Estimated cost (ETH): {estimatedCost}
+              </Box>
+            )}
             <Box display="flex" gap="1rem">
-              {!address && <LoadingButton variant="contained" onClick={() => connectWallet()}>Connect Wallet</LoadingButton>}
+              {!address && <LoadingButton variant="contained" onClick={(event: any) => { event.preventDefault(); requestWallet()}}>Connect Wallet</LoadingButton>}
               <LoadingButton disabled={!address} loading={sending} variant="contained" type="submit">{prove ? 'Prove transaction' : 'Replay transaction'}</LoadingButton>
-              <LoadingButton onClick={() => handleModalClose()}>Cancel</LoadingButton>
+              <LoadingButton onClick={(event: any) => { event.preventDefault(); handleModalClose()}}>Cancel</LoadingButton>
             </Box>
             <Box mt={4} style={{ width: '100%' }}>
               {error && (
                 <Alert severity="error">{error}</Alert>
+              )}
+              {success && (
+                <Alert severity="success">{success}</Alert>
               )}
             </Box>
           </form>
